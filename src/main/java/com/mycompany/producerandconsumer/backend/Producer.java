@@ -14,10 +14,12 @@ import java.util.logging.Logger;
 public class Producer extends Thread {
     
     private Buffer buffer;
+    private int id;
     private final String string = "abcdefghijklmnñopqrstuvwxyz";
     
-    public Producer (Buffer b) {
+    public Producer (Buffer b, int Id) {
         this.buffer = b;
+        this.id = Id;
     }
     
     public void run () {
@@ -25,7 +27,7 @@ public class Producer extends Thread {
             try {
                 char c = string.charAt((int) (Math.random() * string.length()));
                 buffer.produce(c);
-                System.out.println("Char produced: " + c);
+                System.out.printf("Char produced: %c by Producer: %d %n", c, this.id);
                 
                 sleep((int) (Math.random() * 4500));
             } catch (InterruptedException ex) {

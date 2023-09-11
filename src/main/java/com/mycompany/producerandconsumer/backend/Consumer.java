@@ -15,16 +15,18 @@ import java.util.logging.Logger;
 public class Consumer extends Thread {
     
     private Buffer buffer;
+    private int id;
     
-    public Consumer (Buffer b) {
+    public Consumer (Buffer b, int Id) {
         this.buffer = b;
+        this.id = Id;
     }
     
     public void run () {
         while (true) {
             try {
                 char value = this.buffer.consume();
-                System.out.println("Char consumed: " + value);
+                System.out.printf("Char consumed: %c by Consumer: %d %n", value, this.id);
                 
                 sleep((int) (Math.random() * 7500));
             } catch (InterruptedException ex) {
