@@ -3,9 +3,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.producerandconsumer.backend;
+import com.mycompany.producerandconsumer.backend.ImageUtils;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JLabel;
+import javax.swing.JProgressBar;
 
 /**
  *
@@ -16,23 +19,29 @@ public class Buffer {
     private int next;
     private boolean isEmpty;
     private boolean isFull;
+    private JProgressBar progressBar;
     
-    public Buffer (int size) {
+    public Buffer (int size, JProgressBar progressBar) {
         this.buffer = new char[size];
         this.next = 0;
         this.isEmpty = true;
         this.isFull = false;
+        this.progressBar = progressBar;
+        progressBar.setMaximum(size);
+        progressBar.setValue(0);
     }
     
-    public synchronized void produce (char c) {
+    public synchronized void produce (char c, JLabel producerLabel) {
         while (this.isFull) {
             try {
                 wait();
+                ImageUtils.SetImageLabel(producerLabel, "C:\\Users\\Xavi\\Documents\\NetBeansProjects\\ProducerAndConsumer\\src\\main\\java\\source\\waiting.gif");
             } catch (InterruptedException ex) {
                 Logger.getLogger(Buffer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         
+        ImageUtils.SetImageLabel(producerLabel, "C:\\Users\\Xavi\\Documents\\NetBeansProjects\\ProducerAndConsumer\\src\\main\\java\\source\\producing.gif");
         buffer[next] = c;
         next++;
         this.isEmpty = false;
@@ -41,25 +50,30 @@ public class Buffer {
             this.isFull = true;
         }
         
-        notifyAll();
+        progressBar.setValue(next);
         
+        notifyAll();
     }
     
-    public synchronized char consume () {
+    public synchronized char consume (JLabel consumerLabel) {
         while (this.isEmpty) {
             try {
                 wait();
+                ImageUtils.SetImageLabel(consumerLabel, "C:\\Users\\Xavi\\Documents\\NetBeansProjects\\ProducerAndConsumer\\src\\main\\java\\source\\waiting.gif");
             } catch (InterruptedException ex) {
                 Logger.getLogger(Buffer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         
+        ImageUtils.SetImageLabel(consumerLabel, "C:\\Users\\Xavi\\Documents\\NetBeansProjects\\ProducerAndConsumer\\src\\main\\java\\source\\grab-hand.gif");
         next--;
         this.isEmpty = false;
         
         if (next == 0) {
             this.isEmpty = true;
         }
+        
+        progressBar.setValue(next);
         
         notifyAll();
         
