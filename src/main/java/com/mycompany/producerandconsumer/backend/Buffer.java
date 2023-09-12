@@ -32,7 +32,7 @@ public class Buffer {
     }
     
     public synchronized void produce (char c, JLabel producerLabel) {
-        while (this.isFull) {
+        while (next == buffer.length) {
             try {
                 wait();
                 ImageUtils.SetImageLabel(producerLabel, "C:\\Users\\Xavi\\Documents\\NetBeansProjects\\ProducerAndConsumer\\src\\main\\java\\source\\waiting.gif");
@@ -40,23 +40,23 @@ public class Buffer {
                 Logger.getLogger(Buffer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
         ImageUtils.SetImageLabel(producerLabel, "C:\\Users\\Xavi\\Documents\\NetBeansProjects\\ProducerAndConsumer\\src\\main\\java\\source\\producing.gif");
         buffer[next] = c;
         next++;
         this.isEmpty = false;
-        
-        if (next == this.buffer.length) {
+
+        if (next == buffer.length) {
             this.isFull = true;
         }
-        
+
         progressBar.setValue(next);
-        
+
         notifyAll();
     }
     
     public synchronized char consume (JLabel consumerLabel) {
-        while (this.isEmpty) {
+        while (next == 0) {
             try {
                 wait();
                 ImageUtils.SetImageLabel(consumerLabel, "C:\\Users\\Xavi\\Documents\\NetBeansProjects\\ProducerAndConsumer\\src\\main\\java\\source\\waiting.gif");
@@ -64,20 +64,17 @@ public class Buffer {
                 Logger.getLogger(Buffer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
         ImageUtils.SetImageLabel(consumerLabel, "C:\\Users\\Xavi\\Documents\\NetBeansProjects\\ProducerAndConsumer\\src\\main\\java\\source\\grab-hand.gif");
         next--;
-        this.isEmpty = false;
-        
-        if (next == 0) {
-            this.isEmpty = true;
-        }
-        
+        this.isFull = false;
+        this.isEmpty = (next == 0);
+
         progressBar.setValue(next);
-        
+
         notifyAll();
-        
-        return this.buffer[this.next];
+
+        return this.buffer[next];
     }
     
 }
