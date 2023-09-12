@@ -40,7 +40,7 @@ public class Buffer {
                 Logger.getLogger(Buffer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
+ 
         ImageUtils.SetImageLabel(producerLabel, "C:\\Users\\Xavi\\Documents\\NetBeansProjects\\ProducerAndConsumer\\src\\main\\java\\source\\producing.gif");
         buffer[next] = c;
         next++;
